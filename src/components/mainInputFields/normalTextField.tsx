@@ -1,10 +1,10 @@
+import { normalTextFieldProps } from "@/utils/types/frondend/normalTextFieldProps";
 import { Dispatch, SetStateAction } from "react";
 
-interface Props {
-  normalText: string;
-  setNormalText: Dispatch<SetStateAction<string>>;
-}
-export default function NormalTextField({ normalText, setNormalText }: Props) {
+export default function NormalTextField({
+  normalText,
+  setNormalText,
+}: normalTextFieldProps) {
   return (
     <div className="w-full h-[48%] my-4 flex flex-col">
       <label className="font-bold text-[16px]">Normal Text</label>
@@ -12,7 +12,7 @@ export default function NormalTextField({ normalText, setNormalText }: Props) {
         type="text"
         value={normalText}
         onChange={(e) => setNormalText(e.target.value)}
-        className="w-full h-[60px] p-2 mt-4 bg-[#33415C] rounded-[14px] font-bold"
+        className="w-full h-[60px] p-2 mt-4 bg-[#33415C] rounded-[14px] font-bold outline-none"
       />
       <button className="w-full h-[40px] mt-[1em] bg-[#0466C8] font-bold rounded-[9px]">
         Copy to clipboard

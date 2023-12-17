@@ -9,29 +9,51 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import NormalTextField from "./normalTextField";
 import EncryptedTextField from "./encryptedTextField";
 import { Flipper, Flipped } from "react-flip-toolkit";
-
-interface Props {
-  normalText: string;
-  setNormalText: Dispatch<SetStateAction<string>>;
-  encryptedText: string;
-  setEncryptedText: Dispatch<SetStateAction<string>>;
-}
+import KeyField from "../key";
+import mainInputFieldProps from "@/utils/types/frondend";
+import { envVariable } from "@/utils/envLoader";
+import { dataRecievedFromEncryption } from "@/utils/types/frondend/frondendReceiveType";
 
 interface SwapComponentsType {
   component: JSX.Element;
   key: number;
 }
 export default function MainInputField({
+  encryptionKey,
+  setEncryptionKey,
   normalText,
   setNormalText,
   encryptedText,
   setEncryptedText,
-}: Props) {
+}: mainInputFieldProps) {
   const [swapped, setSwapped] = useState(false);
   const [swapComponents, setSwapComponents] = useState(["Normal", "Encrypted"]);
   console.log(swapComponents);
+
+  //useEffect goes here
+
+  useEffect(() => {
+    console.log(process.env.NEXT_PUBLIC_MAIN_URL);
+    const fetchEncryptedText = async () => {
+      const res = await fetch(`${envVariable.mainUrl}/api/encryption`, {
+        method: "POST",
+        body: JSON.stringify(normalText),
+      });
+      return res.json();
+    };
+    fetchEncryptedText().then((data: dataRecievedFromEncryption) => {
+      if (data.error !== undefined) return;
+      if (data.encryptedText === "" || data.encryptedText === undefined) return;
+      setEncryptedText(data.encryptedText);
+    });
+  }, [encryptionKey, normalText]);
+
   return (
-    <div className="w-[80%] h-[45%] mx-auto">
+    <div className="w-[80%] h-[50%] mx-auto -translate-y-[20%]">
+      <KeyField
+        encryptionKey={encryptionKey}
+        setEncryptionKey={setEncryptionKey}
+      />
       <Flipper flipKey={swapComponents}>
         {swapComponents.map((component, index) => {
           if (component === "Normal") {

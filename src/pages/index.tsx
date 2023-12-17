@@ -1,7 +1,9 @@
+import KeyField from "@/components/key";
 import MainInputField from "@/components/mainInputFields";
 import { useState } from "react";
 
 export default function Home() {
+  const [encryptionKey, setEncryptionKey] = useState<string>("");
   const [normalText, setNormalText] = useState<string>("");
   const [encryptedText, setEncryptedText] = useState<string>("");
   return (
@@ -10,7 +12,10 @@ export default function Home() {
         <h1>Bro</h1>
         <h1>Code</h1>
       </header>
+
       <MainInputField
+        encryptionKey={encryptionKey}
+        setEncryptionKey={setEncryptionKey}
         normalText={normalText}
         setNormalText={setNormalText}
         encryptedText={encryptedText}
