@@ -5,4 +5,6 @@ import { secretTextFieldProps } from "./secretTextFieldProps";
 export default interface mainInputFieldProps
   extends keyProps,
     normalTextFieldProps,
-    secretTextFieldProps {}
+    secretTextFieldProps {
+      encryptionKey: string;
+    }

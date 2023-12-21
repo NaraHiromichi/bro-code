@@ -19,12 +19,12 @@ interface SwapComponentsType {
   key: number;
 }
 export default function MainInputField({
-  encryptionKey,
   setEncryptionKey,
   normalText,
   setNormalText,
   encryptedText,
   setEncryptedText,
+  encryptionKey,
 }: mainInputFieldProps) {
   const [swapped, setSwapped] = useState(false);
   const [swapComponents, setSwapComponents] = useState(["Normal", "Encrypted"]);
@@ -37,7 +37,7 @@ export default function MainInputField({
     const fetchEncryptedText = async () => {
       const res = await fetch(`${envVariable.mainUrl}/api/encryption`, {
         method: "POST",
-        body: JSON.stringify(normalText),
+        body: JSON.stringify({normalText, encryptionKey}),
       });
       return res.json();
     };

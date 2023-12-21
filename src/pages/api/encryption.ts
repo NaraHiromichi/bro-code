@@ -15,22 +15,28 @@ export default function handler(
     res.status(401).json({ error: "unauthorized", encryptedText: undefined });
   }
   if (req.body === undefined) {
-    console.log(req.body);
     res
       .status(400)
       .json({ error: "something went wrong!", encryptedText: undefined });
     return;
   }
-  const { normalText, secretKey }: Encryption = req.body;
+  const { normalText, encryptionKey }: Encryption = JSON.parse(req.body);
   if (
-    secretKey === "" ||
+    encryptionKey === "" ||
     normalText === "" ||
-    secretKey === undefined ||
+    encryptionKey === undefined ||
     normalText === undefined ||
-    secretKey.length === 0 ||
+    encryptionKey.length === 0 ||
     normalText.length === 0
-  )
-    return;
+)
+{
+  console.log("testing 2", req.body.encryptionKey)
+  res
+      .status(400)
+      .json({ error: "something went wrong!", encryptedText: undefined });
+  return;
+
+}
   // makeing alphabet array
   let alpha = Array.from(Array(26)).map((e, i) => i + 65);
   const capitalLetters = alpha.map((x) => String.fromCharCode(x));
@@ -79,7 +85,7 @@ export default function handler(
   const mainProcess = async () => {
     const Text = normalText.split("");
 
-    const key = secretKey.split("").map((k: string) => parseInt(k)) as number[];
+    const key = encryptionKey.split("").map((k: string) => parseInt(k)) as number[];
     const encrpytedTextArray = await encryptProcess(Text, key);
 
     const encryptedText = encrpytedTextArray.join("");
@@ -87,4 +93,5 @@ export default function handler(
     res.status(200).json({ encryptedText: encryptedText, error: undefined });
   };
   mainProcess();
+  console.log("test")
 }
