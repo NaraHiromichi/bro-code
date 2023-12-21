@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { keyProps } from "./keyType";
 import { normalTextFieldProps } from "./normalTextFieldProps";
 import { secretTextFieldProps } from "./secretTextFieldProps";
@@ -7,4 +8,6 @@ export default interface mainInputFieldProps
     normalTextFieldProps,
     secretTextFieldProps {
       encryptionKey: string;
+      swapped: string;
+      setSwapped: Dispatch<SetStateAction<"encryption" | "decryption">>
     }

@@ -25,8 +25,10 @@ export default function MainInputField({
   encryptedText,
   setEncryptedText,
   encryptionKey,
+  swapped,
+  setSwapped
 }: mainInputFieldProps) {
-  const [swapped, setSwapped] = useState(false);
+
   const [swapComponents, setSwapComponents] = useState(["Normal", "Encrypted"]);
   console.log(swapComponents);
 
@@ -35,18 +37,26 @@ export default function MainInputField({
   useEffect(() => {
     console.log(process.env.NEXT_PUBLIC_MAIN_URL);
     const fetchEncryptedText = async () => {
-      const res = await fetch(`${envVariable.mainUrl}/api/encryption`, {
+      const res = await fetch(`${envVariable.mainUrl}/api/${swapped}`, {
         method: "POST",
-        body: JSON.stringify({normalText, encryptionKey}),
+        body: JSON.stringify({normalText, encryptedText, encryptionKey}),
       });
       return res.json();
     };
     fetchEncryptedText().then((data: dataRecievedFromEncryption) => {
-      if (data.error !== undefined) return;
-      if (data.encryptedText === "" || data.encryptedText === undefined) return;
-      setEncryptedText(data.encryptedText);
+      if (data.error !== undefined || data.encryptedText === undefined || data.normalText === undefined) return;
+      const normalTextFromServer = data.normalText
+      const encryptedTextFromServer = data.encryptedText
+      if (encryptedTextFromServer !== "" || encryptedTextFromServer !== undefined){
+        if(encryptedTextFromServer === encryptedText) return
+        setEncryptedText(encryptedText);
+      }
+      if (normalTextFromServer !== "" || normalTextFromServer !== undefined) {
+        if(normalTextFromServer === normalText) return 
+        setNormalText(normalTextFromServer)
+      }
     });
-  }, [encryptionKey, normalText]);
+  }, [encryptionKey, normalText, encryptedText, swapped]);
 
   return (
     <div className="w-[80%] h-[50%] mx-auto -translate-y-[20%]">
@@ -82,7 +92,12 @@ export default function MainInputField({
           temp.push(temp.shift() as string);
           console.log(temp);
           setSwapComponents(temp);
-          setSwapped(!swapped);
+          setSwapped((prev) => {
+            if(prev === 'encryption'){
+             return 'decryption'
+            }
+            return 'encryption'
+          });
         }}
         className="w-[135px] h-[42px] text-center bg-black font-white font-bold text-[16px] border-2 border-white rounded-[9px]"
       >

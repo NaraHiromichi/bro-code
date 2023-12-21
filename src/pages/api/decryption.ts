@@ -16,7 +16,7 @@ export default function handler(
     res.status(401).json({ error: "unauthorized", normalText: undefined, encryptedText: undefined });
   }
   if (req.body === undefined) {
-    res
+ res
       .status(400)
       .json({ error: "something went wrong!", normalText: undefined, encryptedText: undefined });
     return;
@@ -24,11 +24,11 @@ export default function handler(
   const { normalText, encryptedText, encryptionKey }: EncryptionAndDecryption = JSON.parse(req.body);
   if (
     encryptionKey === "" ||
-    normalText === "" ||
+    encryptedText === "" ||
     encryptionKey === undefined ||
-    normalText === undefined ||
+    encryptedText === undefined ||
     encryptionKey.length === 0 ||
-    normalText.length === 0
+    encryptedText.length === 0
 )
 {
   console.log("testing 2", req.body.encryptionKey)
@@ -46,52 +46,48 @@ export default function handler(
   //functions start here
 
   //encryptFunc
-  const encryptProcess = (Text: string[], key: number[]) => {
+  const decryptProcess = (Text: string[], key: number[]) => {
     return new Promise<string[]>((resolve) => {
-      let encrpytedText: string[] = [];
+      let decryptedText: string[] = [];
       Text.forEach((t) => {
         const isCapital = t.toUpperCase() === t ? true : false;
         if (t === " ") {
-          encrpytedText.push(" ");
+          decryptedText.push(" ");
           return;
         }
         const tempIndex = isCapital
           ? capitalLetters.indexOf(t)
           : smallLetters.indexOf(t);
-        const leftItemCount = capitalLetters.length - (tempIndex + 1);
+        const leftItemCount = tempIndex
         const excessItemCount: number = key[0] - leftItemCount;
 
         if (excessItemCount > 0) {
-          encrpytedText.push(
+          decryptedText.push(
             isCapital
-              ? capitalLetters[excessItemCount - 1]
-              : smallLetters[excessItemCount - 1]
+              ? capitalLetters[capitalLetters.length - excessItemCount]
+              : smallLetters[smallLetters.length - excessItemCount]
           );
           // for infinite nested loop
           key.push(key.shift() as number);
           return;
         }
 
-        encrpytedText.push(
-          isCapital
-            ? capitalLetters[key[0] + tempIndex]
-            : smallLetters[key[0] + tempIndex]
-        );
+        decryptedText.push(isCapital ? capitalLetters[tempIndex - key[0]] : smallLetters[tempIndex - key[0]])
         // for infinite nested loop
         key.push(key.shift() as number);
       });
-      resolve(encrpytedText);
+      resolve(decryptedText);
     });
   };
   const mainProcess = async () => {
-    const Text = normalText.split("");
+    const Text = encryptedText.split("");
 
     const key = encryptionKey.split("").map((k: string) => parseInt(k)) as number[];
-    const encrpytedTextArray = await encryptProcess(Text, key);
+    const encrpytedTextArray = await decryptProcess(Text, key);
 
-    const encryptedText = encrpytedTextArray.join("");
-    console.log(encryptedText);
-    res.status(200).json({ normalText: normalText, encryptedText: encryptedText, error: undefined });
+    const decryptedText = encrpytedTextArray.join("");
+    console.log({ normalText: normalText, encryptedText: decryptedText, error: undefined });
+    res.status(200).json({ normalText: normalText, encryptedText: decryptedText, error: undefined });
   };
   mainProcess();
   console.log("test")
