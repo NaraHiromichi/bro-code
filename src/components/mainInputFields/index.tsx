@@ -26,9 +26,8 @@ export default function MainInputField({
   setEncryptedText,
   encryptionKey,
   swapped,
-  setSwapped
+  setSwapped,
 }: mainInputFieldProps) {
-
   const [swapComponents, setSwapComponents] = useState(["Normal", "Encrypted"]);
   console.log(swapComponents);
 
@@ -39,22 +38,31 @@ export default function MainInputField({
     const fetchEncryptedText = async () => {
       const res = await fetch(`${envVariable.mainUrl}/api/${swapped}`, {
         method: "POST",
-        body: JSON.stringify({normalText, encryptedText, encryptionKey}),
+        body: JSON.stringify({ normalText, encryptedText, encryptionKey }),
       });
       return res.json();
     };
     fetchEncryptedText().then((data: dataRecievedFromEncryption) => {
-      if (data.error !== undefined || data.encryptedText === undefined || data.normalText === undefined) return;
-      const normalTextFromServer = data.normalText
-      const encryptedTextFromServer = data.encryptedText
-      if (encryptedTextFromServer !== "" || encryptedTextFromServer !== undefined){
-        if(encryptedTextFromServer === encryptedText) return
-        setEncryptedText(encryptedText);
+      if (swapped === "encryption") {
+        if (data.encryptedText === undefined) return;
+        setEncryptedText(data.encryptedText);
+        return;
       }
-      if (normalTextFromServer !== "" || normalTextFromServer !== undefined) {
-        if(normalTextFromServer === normalText) return 
-        setNormalText(normalTextFromServer)
-      }
+      if (data.encryptedText === undefined || data.normalText === undefined)
+        return;
+      setNormalText(data.normalText);
+      console.log(data, "inside fetch");
+      // if (data.error !== undefined || data.encryptedText === undefined || data.normalText === undefined) return;
+      // const normalTextFromServer = data.normalText
+      // const encryptedTextFromServer = data.encryptedText
+      // if (encryptedTextFromServer !== "" || encryptedTextFromServer !== undefined){
+      //   if(encryptedTextFromServer === encryptedText) return
+      //   setEncryptedText(encryptedText);
+      // }
+      // if (normalTextFromServer !== "" || normalTextFromServer !== undefined) {
+      //   if(normalTextFromServer === normalText) return
+      //   setNormalText(normalTextFromServer)
+      // }
     });
   }, [encryptionKey, normalText, encryptedText, swapped]);
 
@@ -93,10 +101,10 @@ export default function MainInputField({
           console.log(temp);
           setSwapComponents(temp);
           setSwapped((prev) => {
-            if(prev === 'encryption'){
-             return 'decryption'
+            if (prev === "encryption") {
+              return "decryption";
             }
-            return 'encryption'
+            return "encryption";
           });
         }}
         className="w-[135px] h-[42px] text-center bg-black font-white font-bold text-[16px] border-2 border-white rounded-[9px]"

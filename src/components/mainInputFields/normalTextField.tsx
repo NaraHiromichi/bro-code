@@ -1,3 +1,4 @@
+import { copyContent } from "@/utils/functions/copy";
 import { normalTextFieldProps } from "@/utils/types/frondend/normalTextFieldProps";
 import { Dispatch, SetStateAction } from "react";
 
@@ -14,7 +15,12 @@ export default function NormalTextField({
         onChange={(e) => setNormalText(e.target.value)}
         className="w-full h-[60px] p-2 mt-4 bg-[#33415C] rounded-[14px] font-bold outline-none"
       />
-      <button className="w-full h-[40px] mt-[1em] bg-[#0466C8] font-bold rounded-[9px]">
+      <button
+        onClick={async () => {
+          await copyContent(normalText);
+        }}
+        className="w-full h-[40px] mt-[1em] bg-[#0466C8] font-bold rounded-[9px]"
+      >
         Copy to clipboard
       </button>
     </div>

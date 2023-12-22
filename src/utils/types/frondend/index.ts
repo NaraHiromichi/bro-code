@@ -7,7 +7,7 @@ export default interface mainInputFieldProps
   extends keyProps,
     normalTextFieldProps,
     secretTextFieldProps {
-      encryptionKey: string;
-      swapped: string;
-      setSwapped: Dispatch<SetStateAction<"encryption" | "decryption">>
-    }
+  encryptionKey: string;
+  swapped: "encryption" | "decryption";
+  setSwapped: Dispatch<SetStateAction<"encryption" | "decryption">>;
+}

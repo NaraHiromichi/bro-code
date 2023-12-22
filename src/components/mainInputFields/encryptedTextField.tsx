@@ -1,3 +1,4 @@
+import { copyContent } from "@/utils/functions/copy";
 import { secretTextFieldProps } from "@/utils/types/frondend/secretTextFieldProps";
 import { Dispatch, SetStateAction } from "react";
 
@@ -14,7 +15,12 @@ export default function EncryptedTextField({
         onChange={(e) => setEncryptedText(e.target.value)}
         className="w-full h-[60px] p-2 mt-4 bg-[#33415C] rounded-[14px] font-bold outline-none"
       />
-      <button className="w-full h-[40px] mt-[1em] bg-white text-black font-bold rounded-[9px]">
+      <button
+        onClick={async () => {
+          await copyContent(encryptedText);
+        }}
+        className="w-full h-[40px] mt-[1em] bg-white text-black font-bold rounded-[9px]"
+      >
         Copy to clipboard
       </button>
     </div>
